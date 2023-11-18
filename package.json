@@ -1,0 +1,21 @@
+{
+  "name": "error-null-handle",
+  "version": "0.1.0",
+  "description": "function programming approach for error and null handling",
+  "main": "./lib/index.js",
+  "module": "./es/index.js",
+  "typings": "es/index.d.ts",
+  "scripts": {
+    "build": "tsc -p ./tsconfig.es.json && tsc -p ./tsconfig.cjs.json"
+  },
+  "keywords": [
+    "typescript",
+    "error handle",
+    "null handle"
+  ],
+  "author": "lucifer",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
