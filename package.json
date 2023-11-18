@@ -8,6 +8,10 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.es.json && tsc -p ./tsconfig.cjs.json"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Immortal1206/error-null-handle"
+  },
   "keywords": [
     "typescript",
     "error handle",
