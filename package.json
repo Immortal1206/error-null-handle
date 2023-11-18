@@ -1,6 +1,6 @@
 {
   "name": "error-null-handle",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "function programming approach for error and null handling",
   "main": "./dist/lib/index.js",
   "module": "./dist/es/index.js",
