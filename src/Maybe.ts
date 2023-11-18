@@ -96,7 +96,6 @@ class Just<A> implements MaybeMethods<A> {
 }
 
 class Nothing<A> implements MaybeMethods<A> {
-  private _tag = 'Nothing'
   static of<A>(): Maybe<A> {
     return new Nothing()
   }
