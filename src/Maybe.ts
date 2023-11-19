@@ -203,7 +203,7 @@ interface MaybeMethods<A> extends MaybeFunctor<A>, MaybeApplicative<A>, MaybeMon
    */
   mapOrElse: <B>(f: (v: A) => B, defaultValue: () => B) => B
   /**
-   * @description transforms the Maybe<A> into a Result<A, B>, mapping Just<A> to Ok<A> and None to Err<B>.
+   * @description transforms the Maybe<A> into a Result<A, B>, mapping Just<A> to Ok<A> and Nothing to Err<B>.
    */
   toResult: <B>(err: B) => Result<A, B>
 }
