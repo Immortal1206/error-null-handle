@@ -7,8 +7,7 @@
   "types": "./dist/es/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc -p ./tsconfig.es.json && tsc -p ./tsconfig.cjs.json && rollup -c rollup.config.js",
-    "rollup:build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js"
   },
   "repository": {
     "type": "git",
