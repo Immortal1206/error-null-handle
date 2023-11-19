@@ -1,3 +1,10 @@
+import { MaybeTag } from './Maybe'
+import { ResultTag } from './Result'
+
+export const JustTag = MaybeTag.Just
+export const NothingTag = MaybeTag.Nothing
+export const OkTag = ResultTag.Ok
+export const ErrTag = ResultTag.Err
 export {
   default as maybe,
   just,
@@ -10,6 +17,7 @@ export {
   default as result,
   ok,
   err,
+  to,
   type Result,
   type OkObject,
   type ErrObject,
