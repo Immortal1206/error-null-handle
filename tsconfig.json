@@ -10,6 +10,7 @@
     "sourceMap": true,
     "declaration": true,
     "strict": true,
+    "removeComments": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
