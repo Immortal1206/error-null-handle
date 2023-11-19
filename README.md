@@ -52,7 +52,7 @@
 
 * toResult: \<B>(err: B) => Result\<A, B>
 
-  transforms the Maybe\<A> into a Result\<A, B>, mapping Just\<A> to Ok\<A> and None to Err\<B>.
+  transforms the Maybe\<A> into a Result\<A, B>, mapping Just\<A> to Ok\<A> and Nothing to Err\<B>.
 
 * ap :: \<B>(other: Maybe\<A>) => Maybe\<B>
 
