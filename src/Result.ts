@@ -1,4 +1,4 @@
-import { Maybe, just, nothing } from './Maybe'
+import { type Maybe, just, nothing } from './Maybe'
 
 export const enum ResultTag {
   Ok = 'Ok',
@@ -127,6 +127,9 @@ class Ok<A, B> implements ResultMethods<A, B> {
       _value: this.unwrap()
     }
   }
+  get [Symbol.toStringTag](): string {
+    return ResultTag.Ok
+  }
 }
 
 class Err<A, B> implements ResultMethods<A, B> {
@@ -181,6 +184,9 @@ class Err<A, B> implements ResultMethods<A, B> {
       _tag: ResultTag.Err,
       _msg: this.unwrapErr()
     }
+  }
+  get [Symbol.toStringTag](): string {
+    return ResultTag.Err
   }
 }
 

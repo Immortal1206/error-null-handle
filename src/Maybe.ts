@@ -110,6 +110,9 @@ class Just<A> implements MaybeMethods<A> {
       _value: this.unwrap()
     }
   }
+  get [Symbol.toStringTag](): string {
+    return MaybeTag.Just
+  }
 }
 
 class Nothing<A> implements MaybeMethods<A> {
@@ -153,6 +156,9 @@ class Nothing<A> implements MaybeMethods<A> {
     return {
       _tag: MaybeTag.Nothing,
     }
+  }
+  get [Symbol.toStringTag](): string {
+    return MaybeTag.Nothing
   }
 }
 
