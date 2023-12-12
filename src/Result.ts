@@ -57,10 +57,13 @@ export const fromObject = <A, B>(obj: OkObject<A> | ErrObject<B>): Result<Result
 /**
  * @description convert a Promise<A> to a Promise<Result<A, B>>, handle the error by to function
  */
-export const to = <A, B = unknown>(promise: Promise<A>): Promise<Result<A, B>> => {
-  return promise
-    .then(res => ok<A, B>(res))
-    .catch(e => err<A, B>(e))
+export const to = async <A, B = unknown>(promise: Promise<A>): Promise<Result<A, B>> => {
+  try {
+    const res = await promise
+    return ok<A, B>(res)
+  } catch (e) {
+    return err<A, B>(e as B)
+  }
 }
 export default {
   ok,
@@ -170,7 +173,7 @@ class Err<A, B> implements ResultMethods<A, B> {
   mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
     return defaultValue()
   }
-  ap<A1>(f: Result<A, B>): Result<A1, B> {
+  ap<A1>(other: Result<A, B>): Result<A1, B> {
     return err(this.unwrapErr())
   }
   bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {

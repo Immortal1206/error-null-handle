@@ -52,13 +52,26 @@ export const fromString = <A>(s: string): Result<Maybe<A>, string> => {
     return err((error as SyntaxError).message)
   }
 }
+/**
+ * Creates a Maybe instance from a nullable value.
+ * @param {A | null | undefined} value - The value to create the Maybe instance from.
+ * @return {Maybe<A>} - The Maybe instance created from the value.
+ */
+export const fromNullable = <A>(value: A | null | undefined): Maybe<A> => {
+  if (value === null || value === undefined) {
+    return nothing()
+  } else {
+    return just(value)
+  }
+}
 export default {
   just,
   nothing,
   JustTag: MaybeTag.Just,
   NothingTag: MaybeTag.Nothing,
   fromObject,
-  fromString
+  fromString,
+  fromNullable,
 }
 
 class Just<A> implements MaybeMethods<A> {
