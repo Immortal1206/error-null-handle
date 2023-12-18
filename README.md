@@ -88,7 +88,7 @@
 
   convert a OkObject\<A> or a ErrObject\<B> to Result\<A, B>
 
-* to :: \<A, B = unknown>(promise: Promise\<A>) => Promise\<Result<A, B>>
+* fromPromise :: \<A, B = unknown>(promise: Promise\<A>) => Promise\<Result<A, B>>
 
   convert a Promise\<A> to a Promise\<Result\<A, B>>, handle the error by to function
 

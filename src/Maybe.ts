@@ -117,13 +117,13 @@ class Just<A> implements MaybeMethods<A> {
   toResult<B>(err: B): Result<A, B> {
     return ok(this.unwrap())
   }
-  toJSON(): JustObject<A> {
+  private toJSON(): JustObject<A> {
     return {
       _tag: MaybeTag.Just,
       _value: this.unwrap()
     }
   }
-  get [Symbol.toStringTag](): string {
+  private get [Symbol.toStringTag](): string {
     return MaybeTag.Just
   }
 }
@@ -165,12 +165,12 @@ class Nothing<A> implements MaybeMethods<A> {
   toResult<B>(e: B): Result<A, B> {
     return err(e)
   }
-  toJSON(): NothingObject {
+  private toJSON(): NothingObject {
     return {
       _tag: MaybeTag.Nothing,
     }
   }
-  get [Symbol.toStringTag](): string {
+  private get [Symbol.toStringTag](): string {
     return MaybeTag.Nothing
   }
 }

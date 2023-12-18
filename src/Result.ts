@@ -57,7 +57,7 @@ export const fromObject = <A, B>(obj: OkObject<A> | ErrObject<B>): Result<Result
 /**
  * @description convert a Promise<A> to a Promise<Result<A, B>>, handle the error by to function
  */
-export const to = async <A, B = unknown>(promise: Promise<A>): Promise<Result<A, B>> => {
+export const fromPromise = async <A, B = unknown>(promise: Promise<A>): Promise<Result<A, B>> => {
   try {
     const res = await promise
     return ok<A, B>(res)
@@ -68,7 +68,7 @@ export const to = async <A, B = unknown>(promise: Promise<A>): Promise<Result<A,
 export default {
   ok,
   err,
-  to,
+  fromPromise,
   OkTag: ResultTag.Ok,
   ErrTag: ResultTag.Err,
   fromString,
@@ -124,13 +124,13 @@ class Ok<A, B> implements ResultMethods<A, B> {
   toMaybe(): Maybe<A> {
     return just(this.unwrap())
   }
-  toJSON(): OkObject<A> {
+  private toJSON(): OkObject<A> {
     return {
       _tag: ResultTag.Ok,
       _value: this.unwrap()
     }
   }
-  get [Symbol.toStringTag](): string {
+  private get [Symbol.toStringTag](): string {
     return ResultTag.Ok
   }
 }
@@ -182,13 +182,13 @@ class Err<A, B> implements ResultMethods<A, B> {
   toMaybe(): Maybe<A> {
     return nothing()
   }
-  toJSON(): ErrObject<B> {
+  private toJSON(): ErrObject<B> {
     return {
       _tag: ResultTag.Err,
       _msg: this.unwrapErr()
     }
   }
-  get [Symbol.toStringTag](): string {
+  private get [Symbol.toStringTag](): string {
     return ResultTag.Err
   }
 }
