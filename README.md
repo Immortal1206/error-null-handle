@@ -70,6 +70,18 @@
 
   return Nothing if Nothing.
 
+*  match :: \<B>(onJust: (a: A) => B, onNothing: () => B) => B
+
+  do something on Maybe\<A>, note that you should handle the two cases: Just\<A> and Nothing
+
+  if return some value, the two handlers should return the same type.
+
+  if you want to return different types, use do instead.
+
+*  do :: \<T, U>(onJust: (a: A) => T, onNothing: () => U) => T | U
+
+  do something on Maybe\<A>, note that you should handle the two cases: Just\<A> and Nothing
+
 ### Result\<A, B>
 
 * ok :: \<A, B>(value: A) => Result\<A, B>
@@ -143,3 +155,15 @@
   apply a function to the Ok value without concerning about Err.
 
   return Err if Err.
+
+*  match :: \<T>(f: (v: A) => T, g: (v: B) => T) => T
+
+  do something on Result<A, B>, note that you should handle the two cases: Ok\<A, B> and Err\<A, B>
+
+  if return some value, the two handlers should return the same type.
+
+  if you want to return different types, use do instead.
+
+*  do :: \<T, U>(f: (v: A) => T, g: (v: B) => U) => T | U
+
+  do something on Result<A, B>, note that you should handle the two cases: Ok\<A, B> and Err\<A, B>

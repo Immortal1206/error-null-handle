@@ -114,6 +114,12 @@ class Just<A> implements MaybeMethods<A> {
   bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
     return f(this.unwrap())
   }
+  match<B>(onJust: (a: A) => B, onNothing: () => B): B {
+    return onJust(this.unwrap())
+  }
+  do<T, U>(onJust: (a: A) => T, onNothing: () => U): T | U {
+    return onJust(this.unwrap())
+  }
   toResult<B>(err: B): Result<A, B> {
     return ok(this.unwrap())
   }
@@ -161,6 +167,12 @@ class Nothing<A> implements MaybeMethods<A> {
   }
   bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
     return nothing()
+  }
+  match<B>(onJust: (a: A) => B, onNothing: () => B): B {
+    return onNothing()
+  }
+  do<T, U>(onJust: (a: A) => T, onNothing: () => U): T | U {
+    return onNothing()
   }
   toResult<B>(e: B): Result<A, B> {
     return err(e)
@@ -225,4 +237,13 @@ interface MaybeMethods<A> extends MaybeFunctor<A>, MaybeApplicative<A>, MaybeMon
    * @description transforms the Maybe<A> into a Result<A, B>, mapping Just<A> to Ok<A> and Nothing to Err<B>.
    */
   toResult: <B>(err: B) => Result<A, B>
+  /**
+   * @description do something on Maybe<A>, note that you should handle the two cases: Just<A> and Nothing
+   * if return some value, the two handlers should return the same type.
+   */
+  match: <B>(onJust: (a: A) => B, onNothing: () => B) => B
+  /**
+   * @description do something on Maybe<A>, note that you should handle the two cases: Just<A> and Nothing
+   */
+  do: <T, U>(onJust: (a: A) => T, onNothing: () => U) => T | U
 }

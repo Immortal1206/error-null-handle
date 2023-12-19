@@ -121,6 +121,12 @@ class Ok<A, B> implements ResultMethods<A, B> {
   bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
     return f(this.unwrap())
   }
+  match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
+    return onOk(this.unwrap())
+  }
+  do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
+    return onOk(this.unwrap())
+  }
   toMaybe(): Maybe<A> {
     return just(this.unwrap())
   }
@@ -178,6 +184,12 @@ class Err<A, B> implements ResultMethods<A, B> {
   }
   bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
     return err(this.unwrapErr())
+  }
+  match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
+    return onErr(this.unwrapErr())
+  }
+  do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
+    return onErr(this.unwrapErr())
   }
   toMaybe(): Maybe<A> {
     return nothing()
@@ -249,5 +261,16 @@ interface ResultMethods<A, B> extends ResultFunctor<A, B>, ResultApplicative<A, 
    */
   mapOrElse: <A1>(f: (v: A) => A1, defaultValue: () => A1) => A1
   toMaybe: () => Maybe<A>
+  /**
+   * @description do something on Result<A, B>, note that you should handle the two cases: Ok<A, B> and Err<A, B>
+   * if you want to return different type, use do instead.
+   * @returns if return some value, the two handlers should return the same type.
+   */
+  match: <T>(f: (v: A) => T, g: (v: B) => T) => T
+  /**
+   * @description do something on Result<A, B>, note that you should handle the two cases: Ok<A, B> and Err<A, B>
+   */
+  do: <T, U>(f: (v: A) => T, g: (v: B) => U) => T | U
 }
+
 
