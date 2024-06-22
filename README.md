@@ -144,7 +144,7 @@
 
   or function f to a contained Ok value.
 
-* ap :: <A1>(other: Result\<A, B>) => Result\<A1, B>
+* ap :: <A1, A2>(other: Result\<A1, B>) => Result\<A2, B>
 
   apply a Result<(a: A) => A1, B> to a Result<A, B>,
 
