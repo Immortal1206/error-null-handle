@@ -146,7 +146,7 @@
 
 * ap :: <A1, A2>(other: Result\<A1, B>) => Result\<A2, B>
 
-  apply a Result<(a: A) => A1, B> to a Result<A, B>,
+  apply a Result<(a: A1) => A2, B> to a Result<A1, B>,
 
   note that the caller instance should be Result<(a: A) => A1, B>.
 
