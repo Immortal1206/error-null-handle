@@ -115,8 +115,8 @@ class Ok<A, B> implements ResultMethods<A, B> {
   isErr(): this is Err<A, B> {
     return false
   }
-  ap<A1>(other: Result<A, B>): Result<A1, B> {
-    return other.map(this.unwrap() as (v: A) => A1)
+  ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
+    return other.map(this.unwrap() as (v: A1) => A2)
   }
   bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
     return f(this.unwrap())
@@ -136,7 +136,7 @@ class Ok<A, B> implements ResultMethods<A, B> {
       _value: this.unwrap()
     }
   }
-  private get [Symbol.toStringTag](): string {
+  private [Symbol.toStringTag](): string {
     return ResultTag.Ok
   }
 }
@@ -179,7 +179,7 @@ class Err<A, B> implements ResultMethods<A, B> {
   mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
     return defaultValue()
   }
-  ap<A1>(other: Result<A, B>): Result<A1, B> {
+  ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
     return err(this.unwrapErr())
   }
   bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
@@ -200,7 +200,7 @@ class Err<A, B> implements ResultMethods<A, B> {
       _msg: this.unwrapErr()
     }
   }
-  private get [Symbol.toStringTag](): string {
+  private [Symbol.toStringTag](): string {
     return ResultTag.Err
   }
 }
@@ -214,10 +214,10 @@ interface ResultFunctor<A, B> {
 }
 interface ResultApplicative<A, B> {
   /**
-   * @description apply a Result<(a: A) => A1, B> to a Result<A, B>,
-   * note that the caller instance should be Result<(a: A) => A1, B>.
+   * @description apply a Result<(a: A1) => A2, B> to a Result<A1, B>,
+   * note that the caller instance should be Result<(a: A1) => A2, B>.
    */
-  ap: <A1>(other: Result<A, B>) => Result<A1, B>
+  ap: <A1, A2>(other: Result<A1, B>) => Result<A2, B>
 }
 interface ResultMonad<A, B> {
   /**
