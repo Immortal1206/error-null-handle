@@ -24,6 +24,10 @@
 
   Creates a Maybe instance from a nullable value.
 
+* isMaybe :: \<T>(v: unknown) => v is Maybe\<T>
+
+  type predicate function, test if a varibale is **Maybe** Object
+
 ### Maybe instance
 
 * isJust / isNothing :: () => boolean
@@ -103,6 +107,10 @@
 * fromPromise :: \<A, B = unknown>(promise: Promise\<A>) => Promise\<Result<A, B>>
 
   convert a Promise\<A> to a Promise\<Result\<A, B>>, handle the error by to function
+
+* isResult :: \<A, B>(v: unknown) => v is Result\<A, B>
+
+  type predicate function, test if a varibale is **Result** Object
 
 ### Result instance
 

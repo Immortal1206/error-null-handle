@@ -65,14 +65,18 @@ export const fromPromise = async <A, B = unknown>(promise: Promise<A>): Promise<
     return err<A, B>(e as B)
   }
 }
+
+export const isResult = <A, B>(a: unknown): a is Result<A, B> => a instanceof Ok || a instanceof Err
+
 export default {
   ok,
   err,
-  fromPromise,
   OkTag: ResultTag.Ok,
   ErrTag: ResultTag.Err,
+  fromPromise,
   fromString,
-  fromObject
+  fromObject,
+  isResult,
 }
 
 class Ok<A, B> implements ResultMethods<A, B> {

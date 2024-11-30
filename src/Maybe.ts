@@ -64,6 +64,9 @@ export const fromNullable = <A>(value: A | null | undefined): Maybe<A> => {
     return just(value)
   }
 }
+
+export const isMaybe = <T>(a: unknown): a is Maybe<T> => a instanceof Just || a instanceof Nothing
+
 export default {
   just,
   nothing,
@@ -72,6 +75,7 @@ export default {
   fromObject,
   fromString,
   fromNullable,
+  isMaybe
 }
 
 class Just<A> implements MaybeMethods<A> {
