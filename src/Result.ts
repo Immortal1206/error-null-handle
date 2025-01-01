@@ -1,5 +1,135 @@
 import { type Maybe, just, nothing } from './Maybe'
 
+class Ok<A, B> implements ResultMethods<A, B> {
+  private _value: A
+  constructor(value: A) {
+    this._value = value
+  }
+
+  static of<A, B>(value: A): Result<A, B> {
+    return new Ok(value)
+  }
+
+  map<A1>(f: (v: A) => A1): Result<A1, B> {
+    return ok(f(this._value))
+  }
+  mapErr<B1>(f: (v: B) => B1): Result<A, B1> {
+    return ok(this._value)
+  }
+  mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
+    return f(this._value)
+  }
+  mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
+    return f(this._value)
+  }
+  unwrap(): A {
+    return this._value
+  }
+  unwrapErr(): B {
+    throw new TypeError('Call unwrapErr on Ok!')
+  }
+  unwrapOr(defaultValue: A): A {
+    return this._value
+  }
+  unwrapOrElse(f: () => A): A {
+    return this._value
+  }
+  isOk(): this is Ok<A, B> {
+    return true
+  }
+  isErr(): this is Err<A, B> {
+    return false
+  }
+  ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
+    return other.map(this._value as (v: A1) => A2)
+  }
+  bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
+    return f(this._value)
+  }
+  match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
+    return onOk(this._value)
+  }
+  do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
+    return onOk(this._value)
+  }
+  toMaybe(): Maybe<A> {
+    return just(this._value)
+  }
+  private toJSON(): OkObject<A> {
+    return {
+      _tag: ResultTag.Ok,
+      _value: this._value
+    }
+  }
+  get [Symbol.toStringTag](): string {
+    return ResultTag.Ok
+  }
+}
+
+class Err<A, B> implements ResultMethods<A, B> {
+  private _msg: B
+  constructor(value: B) {
+    this._msg = value
+  }
+  static of<A, B>(msg: B): Result<A, B> {
+    return new Err(msg)
+  }
+  unwrap(): A {
+    throw new TypeError('Call unwrap on Err!')
+  }
+  unwrapErr(): B {
+    return this._msg
+  }
+  unwrapOr(defaultValue: A): A {
+    return defaultValue
+  }
+  unwrapOrElse(f: () => A): A {
+    return f()
+  }
+  isOk(): this is Ok<A, B> {
+    return false
+  }
+  isErr(): this is Err<A, B> {
+    return true
+  }
+  map<A1>(f: (v: A) => A1): Result<A1, B> {
+    return Err.of(this._msg)
+  }
+  mapErr<B1>(f: (v: B) => B1): Result<A, B1> {
+    return Err.of(f(this._msg))
+  }
+  mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
+    return defaultValue
+  }
+  mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
+    return defaultValue()
+  }
+  ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
+    return err(this._msg)
+  }
+  bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
+    return err(this._msg)
+  }
+  match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
+    return onErr(this._msg)
+  }
+  do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
+    return onErr(this._msg)
+  }
+  toMaybe(): Maybe<A> {
+    return nothing()
+  }
+  private toJSON(): ErrObject<B> {
+    return {
+      _tag: ResultTag.Err,
+      _msg: this._msg
+    }
+  }
+  get [Symbol.toStringTag](): string {
+    return ResultTag.Err
+  }
+}
+
 export const enum ResultTag {
   Ok = 'Ok',
   Err = 'Err',
@@ -10,7 +140,7 @@ export type Result<A, B> = Ok<A, B> | Err<A, B>
  * @param value the ok value A of Result<A, B>
  * @returns Resule<A, B>
  */
-export const ok = <A, B>(value: A) => Ok.of<A, B>(value)
+export const ok = Ok.of
 /**
  * @description create a Err<B> from value
  * @param value the err value B of Result<A, B>
@@ -77,136 +207,6 @@ export default {
   fromString,
   fromObject,
   isResult,
-}
-
-class Ok<A, B> implements ResultMethods<A, B> {
-  private _value: A
-  constructor(value: A) {
-    this._value = value
-  }
-
-  static of<A, B>(value: A): Result<A, B> {
-    return new Ok(value)
-  }
-
-  map<A1>(f: (v: A) => A1): Result<A1, B> {
-    return ok(f(this.unwrap()))
-  }
-  mapErr<B1>(f: (v: B) => B1): Result<A, B1> {
-    return ok(this.unwrap())
-  }
-  mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
-    return f(this.unwrap())
-  }
-  mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
-    return f(this.unwrap())
-  }
-  unwrap(): A {
-    return this._value
-  }
-  unwrapErr(): B {
-    throw new TypeError('Call unwrapErr on Ok!')
-  }
-  unwrapOr(defaultValue: A): A {
-    return this.unwrap()
-  }
-  unwrapOrElse(f: () => A): A {
-    return this.unwrap()
-  }
-  isOk(): this is Ok<A, B> {
-    return true
-  }
-  isErr(): this is Err<A, B> {
-    return false
-  }
-  ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
-    return other.map(this.unwrap() as (v: A1) => A2)
-  }
-  bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
-    return f(this.unwrap())
-  }
-  match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
-    return onOk(this.unwrap())
-  }
-  do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
-    return onOk(this.unwrap())
-  }
-  toMaybe(): Maybe<A> {
-    return just(this.unwrap())
-  }
-  private toJSON(): OkObject<A> {
-    return {
-      _tag: ResultTag.Ok,
-      _value: this.unwrap()
-    }
-  }
-  private [Symbol.toStringTag](): string {
-    return ResultTag.Ok
-  }
-}
-
-class Err<A, B> implements ResultMethods<A, B> {
-  private _msg: B
-  constructor(value: B) {
-    this._msg = value
-  }
-  static of<A, B>(msg: B): Result<A, B> {
-    return new Err(msg)
-  }
-  unwrap(): A {
-    throw new TypeError('Call unwrap on Err!')
-  }
-  unwrapErr(): B {
-    return this._msg
-  }
-  unwrapOr(defaultValue: A): A {
-    return defaultValue
-  }
-  unwrapOrElse(f: () => A): A {
-    return f()
-  }
-  isOk(): this is Ok<A, B> {
-    return false
-  }
-  isErr(): this is Err<A, B> {
-    return true
-  }
-  map<A1>(f: (v: A) => A1): Result<A1, B> {
-    return Err.of(this.unwrapErr())
-  }
-  mapErr<B1>(f: (v: B) => B1): Result<A, B1> {
-    return Err.of(f(this._msg))
-  }
-  mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
-    return defaultValue
-  }
-  mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
-    return defaultValue()
-  }
-  ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
-    return err(this.unwrapErr())
-  }
-  bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
-    return err(this.unwrapErr())
-  }
-  match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
-    return onErr(this.unwrapErr())
-  }
-  do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
-    return onErr(this.unwrapErr())
-  }
-  toMaybe(): Maybe<A> {
-    return nothing()
-  }
-  private toJSON(): ErrObject<B> {
-    return {
-      _tag: ResultTag.Err,
-      _msg: this.unwrapErr()
-    }
-  }
-  private [Symbol.toStringTag](): string {
-    return ResultTag.Err
-  }
 }
 
 interface ResultFunctor<A, B> {

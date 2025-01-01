@@ -1,4 +1,4 @@
-# function programming approach for error and null handling
+# functional programming approach for error and null handling
 
 ## API Reference
 

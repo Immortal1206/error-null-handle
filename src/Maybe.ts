@@ -1,5 +1,118 @@
 import { err, ok, type Result } from './Result'
 
+class Just<A> implements MaybeMethods<A> {
+  private _value: A
+  constructor(value: A) {
+    this._value = value
+  }
+
+  static of<A>(value: A): Maybe<A> {
+    return new Just(value)
+  }
+
+  map<B>(f: (v: A) => B): Maybe<B> {
+    return just(f(this._value))
+  }
+  mapOr<B>(f: (v: A) => B, defaultValue: B): B {
+    return f(this._value)
+  }
+  mapOrElse<B>(f: (v: A) => B, defaultValue: () => B): B {
+    return f(this._value)
+  }
+  unwrap(): A {
+    return this._value
+  }
+  unwrapOr(elseValue: A): A {
+    return this._value
+  }
+  unwrapOrElse(f: () => A): A {
+    return this._value
+  }
+  isJust(): this is Just<A> {
+    return true
+  }
+  isNothing(): this is Nothing<A> {
+    return false
+  }
+  ap<B, A>(other: Maybe<A>): Maybe<B> {
+    return other.map(this._value as (v: A) => B)
+  }
+  bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
+    return f(this._value)
+  }
+  match<B>(onJust: (a: A) => B, onNothing: () => B): B {
+    return onJust(this._value)
+  }
+  do<T, U>(onJust: (a: A) => T, onNothing: () => U): T | U {
+    return onJust(this._value)
+  }
+  toResult<B>(err: B): Result<A, B> {
+    return ok(this._value)
+  }
+  private toJSON(): JustObject<A> {
+    return {
+      _tag: MaybeTag.Just,
+      _value: this._value
+    }
+  }
+  get [Symbol.toStringTag](): string {
+    return MaybeTag.Just
+  }
+}
+
+class Nothing<A> implements MaybeMethods<A> {
+  static of<A>(): Maybe<A> {
+    return new Nothing()
+  }
+  unwrap(): A {
+    throw new TypeError('Call unwrap on Nothing!')
+  }
+  unwrapOr(elseValue: A): A {
+    return elseValue
+  }
+  unwrapOrElse(f: () => A): A {
+    return f()
+  }
+  isJust(): this is Just<A> {
+    return false
+  }
+  isNothing(): this is Nothing<A> {
+    return true
+  }
+  map<B>(f: (v: A) => B): Maybe<B> {
+    return nothing()
+  }
+  mapOr<B>(f: (v: A) => B, defaultValue: B): B {
+    return defaultValue
+  }
+  mapOrElse<B>(f: (v: A) => B, defaultValue: () => B): B {
+    return defaultValue()
+  }
+  ap<B, A>(f: Maybe<A>): Maybe<B> {
+    return nothing()
+  }
+  bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
+    return nothing()
+  }
+  match<B>(onJust: (a: A) => B, onNothing: () => B): B {
+    return onNothing()
+  }
+  do<T, U>(onJust: (a: A) => T, onNothing: () => U): T | U {
+    return onNothing()
+  }
+  toResult<B>(e: B): Result<A, B> {
+    return err(e)
+  }
+  private toJSON(): NothingObject {
+    return {
+      _tag: MaybeTag.Nothing,
+    }
+  }
+  get [Symbol.toStringTag](): string {
+    return MaybeTag.Nothing
+  }
+}
+
 export const enum MaybeTag {
   Just = 'Just',
   Nothing = 'Nothing',
@@ -10,12 +123,12 @@ export type Maybe<A> = Just<A> | Nothing<A>
  * @param value the Maybe<A> value A
  * @returns Maybe<A>
  */
-export const just = <A>(value: A) => Just.of(value)
+export const just = Just.of
 /**
  * @description create a Nothing<A>
  * @returns Maybe<A>
  */
-export const nothing = <A>() => Nothing.of<A>()
+export const nothing = Nothing.of
 export interface JustObject<A> {
   _tag: MaybeTag.Just
   _value: A
@@ -76,119 +189,6 @@ export default {
   fromString,
   fromNullable,
   isMaybe
-}
-
-class Just<A> implements MaybeMethods<A> {
-  private _value: A
-  constructor(value: A) {
-    this._value = value
-  }
-
-  static of<A>(value: A): Maybe<A> {
-    return new Just(value)
-  }
-
-  map<B>(f: (v: A) => B): Maybe<B> {
-    return just(f(this.unwrap()))
-  }
-  mapOr<B>(f: (v: A) => B, defaultValue: B): B {
-    return f(this.unwrap())
-  }
-  mapOrElse<B>(f: (v: A) => B, defaultValue: () => B): B {
-    return f(this.unwrap())
-  }
-  unwrap(): A {
-    return this._value
-  }
-  unwrapOr(elseValue: A): A {
-    return this.unwrap()
-  }
-  unwrapOrElse(f: () => A): A {
-    return this.unwrap()
-  }
-  isJust(): this is Just<A> {
-    return true
-  }
-  isNothing(): this is Nothing<A> {
-    return false
-  }
-  ap<B, A>(other: Maybe<A>): Maybe<B> {
-    return other.map(this.unwrap() as (v: A) => B)
-  }
-  bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
-    return f(this.unwrap())
-  }
-  match<B>(onJust: (a: A) => B, onNothing: () => B): B {
-    return onJust(this.unwrap())
-  }
-  do<T, U>(onJust: (a: A) => T, onNothing: () => U): T | U {
-    return onJust(this.unwrap())
-  }
-  toResult<B>(err: B): Result<A, B> {
-    return ok(this.unwrap())
-  }
-  private toJSON(): JustObject<A> {
-    return {
-      _tag: MaybeTag.Just,
-      _value: this.unwrap()
-    }
-  }
-  private [Symbol.toStringTag](): string {
-    return MaybeTag.Just
-  }
-}
-
-class Nothing<A> implements MaybeMethods<A> {
-  static of<A>(): Maybe<A> {
-    return new Nothing()
-  }
-  unwrap(): A {
-    throw new TypeError('Call unwrap on Nothing!')
-  }
-  unwrapOr(elseValue: A): A {
-    return elseValue
-  }
-  unwrapOrElse(f: () => A): A {
-    return f()
-  }
-  isJust(): this is Just<A> {
-    return false
-  }
-  isNothing(): this is Nothing<A> {
-    return true
-  }
-  map<B>(f: (v: A) => B): Maybe<B> {
-    return nothing()
-  }
-  mapOr<B>(f: (v: A) => B, defaultValue: B): B {
-    return defaultValue
-  }
-  mapOrElse<B>(f: (v: A) => B, defaultValue: () => B): B {
-    return defaultValue()
-  }
-  ap<B, A>(f: Maybe<A>): Maybe<B> {
-    return nothing()
-  }
-  bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
-    return nothing()
-  }
-  match<B>(onJust: (a: A) => B, onNothing: () => B): B {
-    return onNothing()
-  }
-  do<T, U>(onJust: (a: A) => T, onNothing: () => U): T | U {
-    return onNothing()
-  }
-  toResult<B>(e: B): Result<A, B> {
-    return err(e)
-  }
-  private toJSON(): NothingObject {
-    return {
-      _tag: MaybeTag.Nothing,
-    }
-  }
-  private [Symbol.toStringTag](): string {
-    return MaybeTag.Nothing
-  }
 }
 
 interface MaybeFunctor<A> {
