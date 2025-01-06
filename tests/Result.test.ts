@@ -11,6 +11,16 @@ import { fromObject, fromPromise, fromString } from '../src/Result'
 
 type Fn = (num: number) => string
 
+test('Result expect', () => {
+  expect(ok(1).expect('error')).toEqual(1)
+  expect(() => err(1).expect('error')).toThrow('error: 1')
+})
+
+test('Result expectErr', () => {
+  expect(() => ok(1).expectErr('error')).toThrow('error: 1')
+  expect(err(1).expectErr('error')).toEqual(1)
+})
+
 test('Result unwrap', () => {
   expect(ok(1).unwrap()).toEqual(1)
   expect(() => err(1).unwrap()).toThrow('Call unwrap on Err!')
@@ -53,7 +63,7 @@ test('Result mapOr', () => {
 
 test('Result mapOrElse', () => {
   expect(ok(1).mapOrElse((v) => v + 1, () => 3)).toEqual(2)
-  expect(err<number, number>(1).mapOrElse((v) => v + 1, () => 3)).toEqual(3)
+  expect(err<number, number>(1).mapOrElse((v) => v + 1, (b) => b)).toEqual(1)
 })
 
 test('Result mapErr', () => {

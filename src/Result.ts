@@ -10,6 +10,12 @@ class Ok<A, B> implements ResultMethods<A, B> {
     return new Ok(value)
   }
 
+  expect(msg: string) {
+    return this._value
+  }
+  expectErr(msg: string): B {
+    throw new Error(`${msg}: ${this._value}`)
+  }
   map<A1>(f: (v: A) => A1): Result<A1, B> {
     return ok(f(this._value))
   }
@@ -19,7 +25,7 @@ class Ok<A, B> implements ResultMethods<A, B> {
   mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
     return f(this._value)
   }
-  mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
+  mapOrElse<A1>(f: (a: A) => A1, defaultValue: (b: B) => A1): A1 {
     return f(this._value)
   }
   unwrap(): A {
@@ -74,6 +80,12 @@ class Err<A, B> implements ResultMethods<A, B> {
   static of<A, B>(msg: B): Result<A, B> {
     return new Err(msg)
   }
+  expect(msg: string): A {
+    throw new Error(`${msg}: ${this._msg}`)
+  }
+  expectErr(msg: string): B {
+    return this._msg
+  }
   unwrap(): A {
     throw new TypeError('Call unwrap on Err!')
   }
@@ -101,8 +113,8 @@ class Err<A, B> implements ResultMethods<A, B> {
   mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
     return defaultValue
   }
-  mapOrElse<A1>(f: (v: A) => A1, defaultValue: () => A1): A1 {
-    return defaultValue()
+  mapOrElse<A1>(f: (a: A) => A1, defaultValue: (b: B) => A1): A1 {
+    return defaultValue(this._msg)
   }
   ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
     return err(this._msg)
@@ -235,6 +247,18 @@ interface ResultMethods<A, B> extends ResultFunctor<A, B>, ResultApplicative<A, 
   isOk: () => boolean
   isErr: () => boolean
   /**
+   * Returns the contained `Ok` value.
+   * Panics if the value is an `Err`, with a panic message including the passed message,
+   * and the content(converted to string) of the `Err`.
+   */
+  expect: (msg: string) => A
+  /**
+   * Returns the contained `Err` value.
+   * Panics if the value is an `Ok`, with a panic message including the passed message,
+   * and the content of(convert to string) the `Ok`.
+   */
+  expectErr: (msg: string) => B
+  /**
    * @description returns the contained Ok value, panic on Err.
    */
   unwrap: () => A
@@ -263,7 +287,7 @@ interface ResultMethods<A, B> extends ResultFunctor<A, B>, ResultApplicative<A, 
    * @description maps a Result<A, B> to A1 by applying fallback function default to a contained Err value,
    * or function f to a contained Ok value.
    */
-  mapOrElse: <A1>(f: (v: A) => A1, defaultValue: () => A1) => A1
+  mapOrElse: <A1>(f: (a: A) => A1, defaultValue: (b: B) => A1) => A1
   toMaybe: () => Maybe<A>
   /**
    * @description do something on Result<A, B>, note that you should handle the two cases: Ok<A, B> and Err<A, B>

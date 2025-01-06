@@ -15,6 +15,11 @@ import {
 
 type Fn = (num: number) => string
 
+test('Maybe expect', () => {
+  expect(just(1).expect('error')).toEqual(1)
+  expect(() => nothing().expect('error')).toThrow('error')
+})
+
 test('Maybe unwrap', () => {
   expect(just(1).unwrap()).toEqual(1)
   expect(() => nothing().unwrap()).toThrow('Call unwrap on Nothing!')

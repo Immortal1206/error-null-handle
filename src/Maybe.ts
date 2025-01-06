@@ -10,6 +10,10 @@ class Just<A> implements MaybeMethods<A> {
     return new Just(value)
   }
 
+  expect(msg: string): A {
+    return this._value
+  }
+
   map<B>(f: (v: A) => B): Maybe<B> {
     return just(f(this._value))
   }
@@ -63,6 +67,9 @@ class Just<A> implements MaybeMethods<A> {
 class Nothing<A> implements MaybeMethods<A> {
   static of<A>(): Maybe<A> {
     return new Nothing()
+  }
+  expect(msg: string): A {
+    throw new Error(msg)
   }
   unwrap(): A {
     throw new TypeError('Call unwrap on Nothing!')
@@ -215,6 +222,10 @@ interface MaybeMonad<A> {
 interface MaybeMethods<A> extends MaybeFunctor<A>, MaybeApplicative<A>, MaybeMonad<A> {
   isJust: () => boolean
   isNothing: () => boolean
+  /**
+   * Returns the contained `Just` value. Panics if the value is a `Nothing` with a custom panic message provided by msg.
+   */
+  expect: (msg: string) => A
   /**
    * @description returns the contained Maybe value, would panic on Nothing.
    */

@@ -34,6 +34,10 @@
 
   indicate the instance is Just\<A> / Nothing\<A>
 
+* expect :: (msg: string) => A
+
+  Returns the contained `Just` value. Panics if the value is a `Nothing` with a custom panic message provided by msg.
+
 * unwrap :: () => A
 
   returns the contained Maybe value, would panic on Nothing
@@ -118,6 +122,18 @@
 
   indicate the instance is Ok\<A> / Err\<B>
 
+* expect :: (msg: string) => A
+
+  Returns the contained `Ok` value.<br>
+  Panics if the value is an `Err`, with a panic message including the passed message,<br>
+  and the content(converted to string) of the `Err`.
+
+* expectErr :: (msg: string) => B
+
+  Returns the contained `Err` value.<br>
+  Panics if the value is an `Ok`, with a panic message including the passed message,<br>
+  and the content of(convert to string) the `Ok`.
+
 * unwrap :: () => A
 
   returns the contained Ok value, panic on Err.
@@ -146,7 +162,7 @@
 
   returns the provided default (if Err), or applies a function to the contained value (if Ok) and return it.
 
-* mapOrElse: \<A1>(f: (v: A) => A1, defaultValue: () => A1) => A1
+* mapOrElse: \<A1>(f: (a: A) => A1, defaultValue: (b: B) => A1) => A1
 
   maps a Result\<A, B> to A1 by applying fallback function default to a contained Err value,
 
