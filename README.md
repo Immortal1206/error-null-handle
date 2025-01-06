@@ -146,7 +146,7 @@
 
   returns the contained Ok value or a provided default(if Err).
 
-* unwrapOrElse :: (f: () => A) => A
+* unwrapOrElse :: (f: (b: B) => A) => A
 
   returns the contained Ok value or computes it from the function(if Err).
 

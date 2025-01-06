@@ -33,7 +33,7 @@ test('Result unwrapOr', () => {
 
 test('Result unwrapOrElse', () => {
   expect(ok(1).unwrapOrElse(() => 2)).toEqual(1)
-  expect(err(1).unwrapOrElse(() => 2)).toEqual(2)
+  expect(err(1).unwrapOrElse((b) => b)).toEqual(1)
 })
 
 test('Result unwrapErr', () => {

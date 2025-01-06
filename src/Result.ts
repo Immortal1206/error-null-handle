@@ -37,7 +37,7 @@ class Ok<A, B> implements ResultMethods<A, B> {
   unwrapOr(defaultValue: A): A {
     return this._value
   }
-  unwrapOrElse(f: () => A): A {
+  unwrapOrElse(f: (b: B) => A): A {
     return this._value
   }
   isOk(): this is Ok<A, B> {
@@ -95,8 +95,8 @@ class Err<A, B> implements ResultMethods<A, B> {
   unwrapOr(defaultValue: A): A {
     return defaultValue
   }
-  unwrapOrElse(f: () => A): A {
-    return f()
+  unwrapOrElse(f: (b: B) => A): A {
+    return f(this._msg)
   }
   isOk(): this is Ok<A, B> {
     return false
@@ -273,7 +273,7 @@ interface ResultMethods<A, B> extends ResultFunctor<A, B>, ResultApplicative<A, 
   /**
    * @description returns the contained Ok value or computes it from the function(if Err).
    */
-  unwrapOrElse: (f: () => A) => A
+  unwrapOrElse: (f: (b: B) => A) => A
   /**
    * @description maps a Result<A, B> to Result<A, B1> by applying a function to a contained Err value,
    * leaving an Ok value untouched.
