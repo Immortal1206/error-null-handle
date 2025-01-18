@@ -49,7 +49,7 @@ class Ok<A, B> implements ResultMethods<A, B> {
   ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
     return other.map(this._value as (v: A1) => A2)
   }
-  bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
+  andThen<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
     return f(this._value)
   }
   match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
@@ -119,7 +119,7 @@ class Err<A, B> implements ResultMethods<A, B> {
   ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
     return err(this._msg)
   }
-  bind<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
+  andThen<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
     return err(this._msg)
   }
   match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
@@ -240,7 +240,7 @@ interface ResultMonad<A, B> {
    * @description apply a function to the Ok value without concerning about Err.
    * return Err if Err.
    */
-  bind: <A1>(f: (a: A) => Result<A1, B>) => Result<A1, B>
+  andThen: <A1>(f: (a: A) => Result<A1, B>) => Result<A1, B>
 }
 
 interface ResultMethods<A, B> extends ResultFunctor<A, B>, ResultApplicative<A, B>, ResultMonad<A, B> {

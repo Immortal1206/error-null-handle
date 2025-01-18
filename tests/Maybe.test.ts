@@ -50,9 +50,9 @@ test('Maybe mapOrElse', () => {
   expect(nothing<number>().mapOrElse((v) => v + 1, () => 2)).toEqual(2)
 })
 
-test('Maybe bind', () => {
-  expect(just(1).bind((v) => just(v + 1)).unwrap()).toEqual(2)
-  expect(() => nothing<number>().bind((v) => just(v + 1)).unwrap()).toThrow('Call unwrap on Nothing!')
+test('Maybe andThen', () => {
+  expect(just(1).andThen((v) => just(v + 1)).unwrap()).toEqual(2)
+  expect(() => nothing<number>().andThen((v) => just(v + 1)).unwrap()).toThrow('Call unwrap on Nothing!')
 })
 
 test('Maybe ap', () => {

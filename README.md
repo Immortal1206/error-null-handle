@@ -72,7 +72,7 @@
 
   note that the caller instance should be Maybe\<(a: A) => B>.
 
-* bind :: \<B>(f: (a: A) => Maybe\<B>) => Maybe\<B>
+* andThen :: \<B>(f: (a: A) => Maybe\<B>) => Maybe\<B>
 
   apply a function to the Maybe value without concerning about Nothing.
 
@@ -174,7 +174,7 @@
 
   note that the caller instance should be Result<(a: A) => A1, B>.
 
-* bind :: \<A1>(f: (a: A) => Result\<A1, B>) =>Result\<A1, B>
+* andThen :: \<A1>(f: (a: A) => Result\<A1, B>) =>Result\<A1, B>
 
   apply a function to the Ok value without concerning about Err.
 

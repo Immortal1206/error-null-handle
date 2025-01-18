@@ -41,7 +41,7 @@ class Just<A> implements MaybeMethods<A> {
   ap<B, A>(other: Maybe<A>): Maybe<B> {
     return other.map(this._value as (v: A) => B)
   }
-  bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
+  andThen<B>(f: (a: A) => Maybe<B>): Maybe<B> {
     return f(this._value)
   }
   match<B>(onJust: (a: A) => B, onNothing: () => B): B {
@@ -98,7 +98,7 @@ class Nothing<A> implements MaybeMethods<A> {
   ap<B, A>(f: Maybe<A>): Maybe<B> {
     return nothing()
   }
-  bind<B>(f: (a: A) => Maybe<B>): Maybe<B> {
+  andThen<B>(f: (a: A) => Maybe<B>): Maybe<B> {
     return nothing()
   }
   match<B>(onJust: (a: A) => B, onNothing: () => B): B {
@@ -216,7 +216,7 @@ interface MaybeMonad<A> {
    * @description apply a function to the Maybe value without concerning about Nothing.
    * return Nothing if Nothing.
    */
-  bind: <B>(f: (a: A) => Maybe<B>) => Maybe<B>
+  andThen: <B>(f: (a: A) => Maybe<B>) => Maybe<B>
 }
 
 interface MaybeMethods<A> extends MaybeFunctor<A>, MaybeApplicative<A>, MaybeMonad<A> {

@@ -81,9 +81,9 @@ test('Result do', () => {
   expect(err(1).do(() => 1, () => 2)).toEqual(2)
 })
 
-test('Result bind', () => {
-  expect(ok<number, number>(1).bind((v) => ok(v + 1)).unwrap()).toEqual(2)
-  expect(err<number, number>(1).bind((v) => ok(v + 1)).unwrapErr()).toEqual(1)
+test('Result andThen', () => {
+  expect(ok<number, number>(1).andThen((v) => ok(v + 1)).unwrap()).toEqual(2)
+  expect(err<number, number>(1).andThen((v) => ok(v + 1)).unwrapErr()).toEqual(1)
 })
 
 test('Result ap', () => {
