@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "noEmit": false,
-    "target": "ESNext",
+    "target": "ES2021",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "lib": [

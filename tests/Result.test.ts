@@ -1,13 +1,10 @@
 import {
-  ErrTag,
   err,
-  OkTag,
   ok,
-  type OkObject,
   just,
   nothing,
 } from '../src'
-import { fromObject, fromPromise, fromString } from '../src/Result'
+import { fromPromise, fromString } from '../src/Result'
 
 type Fn = (num: number) => string
 
@@ -97,8 +94,8 @@ test('Result toMaybe', () => {
 })
 
 test('json stringify', () => {
-  expect(JSON.stringify(ok(1))).toEqual('{"_tag":"Ok","_value":1}')
-  expect(JSON.stringify(err(1))).toEqual('{"_tag":"Err","_msg":1}')
+  expect(JSON.stringify(ok(1))).toEqual('{"type":"Ok","value":1}')
+  expect(JSON.stringify(err(1))).toEqual('{"type":"Err","message":1}')
 })
 
 test('Symbol.toStringTag', () => {
@@ -107,15 +104,9 @@ test('Symbol.toStringTag', () => {
 })
 
 test('fromString', () => {
-  expect(fromString('{"_tag":"Ok","_value":1}').unwrap().isOk()).toBe(true)
-  expect(fromString('{"_tag":"Err","_msg":1}').unwrap().isErr()).toBe(true)
-  expect(fromString('{"_tag":"aaa","_value":1}').isErr()).toBe(true)
-})
-
-test('fromObject', () => {
-  expect(fromObject({ _tag: OkTag, _value: 1 }).unwrap().isOk()).toBe(true)
-  expect(fromObject({ _tag: ErrTag, _msg: 1 }).unwrap().isErr()).toBe(true)
-  expect(fromObject({ _tag: 'aaa', _value: 1 } as unknown as OkObject<number>).isErr()).toBe(true)
+  expect(fromString('{"type":"Ok","value":1}').unwrap().isOk()).toBe(true)
+  expect(fromString('{"type":"Err","message":1}').unwrap().isErr()).toBe(true)
+  expect(fromString('{"type":"aaa","value":1}').isErr()).toBe(true)
 })
 
 test('fromPromise', async () => {

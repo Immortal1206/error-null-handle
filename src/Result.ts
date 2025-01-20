@@ -1,9 +1,9 @@
 import { type Maybe, just, nothing } from './Maybe'
 
 class Ok<A, B> implements ResultMethods<A, B> {
-  private _value: A
+  #value: A
   constructor(value: A) {
-    this._value = value
+    this.#value = value
   }
 
   static of<A, B>(value: A): Result<A, B> {
@@ -11,34 +11,34 @@ class Ok<A, B> implements ResultMethods<A, B> {
   }
 
   expect(msg: string) {
-    return this._value
+    return this.#value
   }
   expectErr(msg: string): B {
-    throw new Error(`${msg}: ${this._value}`)
+    throw new Error(`${msg}: ${this.#value}`)
   }
   map<A1>(f: (v: A) => A1): Result<A1, B> {
-    return ok(f(this._value))
+    return ok(f(this.#value))
   }
   mapErr<B1>(f: (v: B) => B1): Result<A, B1> {
-    return ok(this._value)
+    return ok(this.#value)
   }
   mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
-    return f(this._value)
+    return f(this.#value)
   }
   mapOrElse<A1>(f: (a: A) => A1, defaultValue: (b: B) => A1): A1 {
-    return f(this._value)
+    return f(this.#value)
   }
   unwrap(): A {
-    return this._value
+    return this.#value
   }
   unwrapErr(): B {
     throw new TypeError('Call unwrapErr on Ok!')
   }
   unwrapOr(defaultValue: A): A {
-    return this._value
+    return this.#value
   }
   unwrapOrElse(f: (b: B) => A): A {
-    return this._value
+    return this.#value
   }
   isOk(): this is Ok<A, B> {
     return true
@@ -47,56 +47,70 @@ class Ok<A, B> implements ResultMethods<A, B> {
     return false
   }
   ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
-    return other.map(this._value as (v: A1) => A2)
+    return other.map(this.#value as (v: A1) => A2)
   }
   andThen<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
-    return f(this._value)
+    return f(this.#value)
   }
   match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
-    return onOk(this._value)
+    return onOk(this.#value)
   }
   do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
-    return onOk(this._value)
+    return onOk(this.#value)
   }
   toMaybe(): Maybe<A> {
-    return just(this._value)
+    return just(this.#value)
   }
-  private toJSON(): OkObject<A> {
+  private toJSON() {
     return {
-      _tag: ResultTag.Ok,
-      _value: this._value
+      type: ResultTag.Ok,
+      value: this.#value
     }
   }
   get [Symbol.toStringTag](): string {
     return ResultTag.Ok
   }
+
+  [Symbol.iterator](): Iterator<A> {
+    let done = false
+    return {
+      next: () => {
+        if (done) {
+          return { done: true, value: undefined }
+        } else {
+          done = true
+          return { done: false, value: this.#value }
+        }
+      }
+    }
+  }
 }
 
 class Err<A, B> implements ResultMethods<A, B> {
-  private _msg: B
+  #msg: B
   constructor(value: B) {
-    this._msg = value
+    this.#msg = value
   }
   static of<A, B>(msg: B): Result<A, B> {
     return new Err(msg)
   }
   expect(msg: string): A {
-    throw new Error(`${msg}: ${this._msg}`)
+    throw new Error(`${msg}: ${this.#msg}`)
   }
   expectErr(msg: string): B {
-    return this._msg
+    return this.#msg
   }
   unwrap(): A {
     throw new TypeError('Call unwrap on Err!')
   }
   unwrapErr(): B {
-    return this._msg
+    return this.#msg
   }
   unwrapOr(defaultValue: A): A {
     return defaultValue
   }
   unwrapOrElse(f: (b: B) => A): A {
-    return f(this._msg)
+    return f(this.#msg)
   }
   isOk(): this is Ok<A, B> {
     return false
@@ -105,44 +119,58 @@ class Err<A, B> implements ResultMethods<A, B> {
     return true
   }
   map<A1>(f: (v: A) => A1): Result<A1, B> {
-    return Err.of(this._msg)
+    return Err.of(this.#msg)
   }
   mapErr<B1>(f: (v: B) => B1): Result<A, B1> {
-    return Err.of(f(this._msg))
+    return Err.of(f(this.#msg))
   }
   mapOr<A1>(f: (v: A) => A1, defaultValue: A1): A1 {
     return defaultValue
   }
   mapOrElse<A1>(f: (a: A) => A1, defaultValue: (b: B) => A1): A1 {
-    return defaultValue(this._msg)
+    return defaultValue(this.#msg)
   }
   ap<A1, A2>(other: Result<A1, B>): Result<A2, B> {
-    return err(this._msg)
+    return err(this.#msg)
   }
   andThen<A1>(f: (a: A) => Result<A1, B>): Result<A1, B> {
-    return err(this._msg)
+    return err(this.#msg)
   }
   match<T>(onOk: (a: A) => T, onErr: (b: B) => T): T {
-    return onErr(this._msg)
+    return onErr(this.#msg)
   }
   do<T, U>(onOk: (a: A) => T, onErr: (e: B) => U): T | U {
-    return onErr(this._msg)
+    return onErr(this.#msg)
   }
   toMaybe(): Maybe<A> {
     return nothing()
   }
-  private toJSON(): ErrObject<B> {
+  private toJSON() {
     return {
-      _tag: ResultTag.Err,
-      _msg: this._msg
+      type: ResultTag.Err,
+      message: this.#msg
     }
   }
   get [Symbol.toStringTag](): string {
     return ResultTag.Err
   }
+
+  [Symbol.iterator](): Iterator<A> {
+    let done = false
+    return {
+      next: () => {
+        if (done) {
+          return { done: true, value: undefined }
+        } else {
+          done = true
+          return { done: true, value: undefined }
+        }
+      }
+    }
+  }
 }
 
-export const enum ResultTag {
+const enum ResultTag {
   Ok = 'Ok',
   Err = 'Err',
 }
@@ -159,38 +187,24 @@ export const ok = Ok.of
  * @returns Resule<A, B>
  */
 export const err = <A, B>(msg: B) => Err.of<A, B>(msg)
-export interface OkObject<A> {
-  _tag: ResultTag.Ok
-  _value: A
-}
-export interface ErrObject<B> {
-  _tag: ResultTag.Err,
-  _msg: B
-}
+
 /**
  * @description convert a string generated by stringify the Result<A, B> to a Result<A, B>
  */
 export const fromString = <A, B>(s: string): Result<Result<A, B>, string> => {
   try {
-    const obj: OkObject<A> | ErrObject<B> = JSON.parse(s)
-    return fromObject(obj)
-  } catch (error) {
-    return err((error as SyntaxError).message)
-  }
-}
-/**
- * @description convert a OkObject<A> or a ErrObject<B> to Result<A, B>
- */
-export const fromObject = <A, B>(obj: OkObject<A> | ErrObject<B>): Result<Result<A, B>, string> => {
-  try {
-    if (!obj || !obj._tag || (obj._tag !== ResultTag.Ok && obj._tag !== ResultTag.Err)) {
+    const obj = JSON.parse(s)
+    if (
+      !obj ||
+      !obj.type ||
+      obj.type !== ResultTag.Ok && obj.type !== ResultTag.Err
+    ) {
       throw new SyntaxError('Cannot parse to a Result!')
     }
-    if (obj._tag === ResultTag.Ok) {
-      return ok(ok(obj._value))
-    } else {
-      return ok(err(obj._msg))
+    if (obj.type === ResultTag.Ok) {
+      return ok(ok(obj.value))
     }
+    return ok(err(obj.message))
   } catch (error) {
     return err((error as SyntaxError).message)
   }
@@ -213,11 +227,8 @@ export const isResult = <A, B>(a: unknown): a is Result<A, B> => a instanceof Ok
 export default {
   ok,
   err,
-  OkTag: ResultTag.Ok,
-  ErrTag: ResultTag.Err,
   fromPromise,
   fromString,
-  fromObject,
   isResult,
 }
 

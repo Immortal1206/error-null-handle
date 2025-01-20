@@ -1,17 +1,11 @@
 import {
-  JustTag,
   just,
   fromNullable,
   nothing,
-  NothingTag,
   ok,
   err
 } from '../src'
-import {
-  fromObject,
-  fromString,
-  type JustObject,
-} from '../src/Maybe'
+import { fromString } from '../src/Maybe'
 
 type Fn = (num: number) => string
 
@@ -86,8 +80,8 @@ test('Maybe do', () => {
 })
 
 test('json stringify', () => {
-  expect(JSON.stringify(just(1))).toEqual('{"_tag":"Just","_value":1}')
-  expect(JSON.stringify(nothing())).toEqual('{"_tag":"Nothing"}')
+  expect(JSON.stringify(just(1))).toEqual('{"type":"Just","value":1}')
+  expect(JSON.stringify(nothing())).toEqual('{"type":"Nothing"}')
 })
 
 test('Symbol.toStringTag', () => {
@@ -101,16 +95,8 @@ test('fromNullable', () => {
   expect(fromNullable<number>(undefined).unwrapOr(2)).toEqual(2)
 })
 
-test('fromObject', () => {
-  expect(fromObject<number>({ _tag: JustTag, _value: 1 }).unwrap().isJust()).toBe(true)
-  expect(fromObject<number>({ _tag: NothingTag }).unwrap().isNothing()).toBe(true)
-  expect(
-    fromObject<number>({ _tag: 'aaa', _value: 1 } as unknown as JustObject<number>).isErr()
-  ).toBe(true)
-})
-
 test('fromString', () => {
-  expect(fromString('{"_tag":"Just","_value":1}').unwrap().isJust()).toBe(true)
-  expect(fromString('{"_tag":"Nothing"}').unwrap().isNothing()).toBe(true)
-  expect(fromString('{"_tag":"aaa","_value":1}').isErr()).toBe(true)
+  expect(fromString('{"type":"Just","value":1}').unwrap().isJust()).toBe(true)
+  expect(fromString('{"type":"Nothing"}').unwrap().isNothing()).toBe(true)
+  expect(fromString('{"type":"aaa","value":1}').isErr()).toBe(true)
 })
