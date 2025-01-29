@@ -152,6 +152,9 @@ const enum MaybeTag {
   Just = 'Just',
   Nothing = 'Nothing',
 }
+
+export type MaybeObject<A> = { type: MaybeTag.Just, value: A } | { type: MaybeTag.Nothing }
+
 export type Maybe<A> = Just<A> | Nothing<A>
 /**
  * @description create a Just<A> from value
@@ -178,7 +181,7 @@ export const fromString = <A>(s: string): Result<Maybe<A>, string> => {
     ) {
       throw new SyntaxError('Cannot parse to a Maybe!')
     }
-    if (obj.type === MaybeTag.Just) {
+    if (obj.type === MaybeTag.Just && obj.value !== null && obj.value !== undefined) {
       return ok(just(obj.value))
     }
     return ok(nothing())
@@ -204,6 +207,7 @@ export default {
   just,
   nothing,
   fromNullable,
+  fromString,
   isMaybe
 }
 interface MaybeFunctor<A> {
